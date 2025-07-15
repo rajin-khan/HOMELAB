@@ -67,7 +67,7 @@ All **public** and login-free:
 | Indexer        | Type            | Purpose                     |
 |----------------|------------------|-----------------------------|
 | `nyaa.si`      | Anime             | TV/movies                   |
-| `thepiratebay` | General           | TV, films                   |
+| `TPB` | General           | TV, films                   |
 | `rarbg`        | General           | High-quality content        |
 | `torrentdownloads` | General      | Archives, misc              |
 | `yts`          | Movies            | High-quality film releases  |
