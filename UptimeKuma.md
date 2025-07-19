@@ -73,7 +73,7 @@ Visit:
 http://localhost:3001
 ```
 
-You’ll be prompted to:
+You'll be prompted to:
 
 * Create an **admin account**
 * Start adding monitors
@@ -94,27 +94,148 @@ You’ll be prompted to:
 
 ---
 
-## 🧠 Why Create a Status Page?
+## 🌐 Understanding Status Pages & Why You Need Them
 
-A **status page** lets you transparently share the health of your services with collaborators, users, or even just yourself. It adds:
+### 🧠 Why Create a Status Page?
 
-* ✅ Visual confidence that everything is running
-* 🔍 Debug aid when things fail
-* 🌐 Public or private visibility
-* 🔔 Customizable notifications for each service
+Status pages serve multiple critical purposes in your homelab or business environment:
+
+* **🔍 Centralized Health Overview**: Get a bird's-eye view of all your services at a glance
+* **📊 Historical Data**: Track uptime trends and identify patterns in service disruptions  
+* **🔔 Proactive Communication**: Inform users/family about service status before they ask
+* **🛠️ Troubleshooting Aid**: Quickly identify which services are affected during outages
+* **📈 Performance Metrics**: Monitor response times and establish baselines
+* **🤝 Team Coordination**: Share service status with teammates or household members
+* **📱 Mobile Access**: Check status from anywhere without logging into the admin panel
+* **🎯 Integration Ready**: Use with Homepage, Discord bots, or other dashboards
+
+### 💡 Real-World Use Cases:
+
+- **For Families**: "Is Plex down or is it my device?"
+- **For Teams**: Share infrastructure status without giving admin access
+- **For Personal Use**: Quick mobile check when away from home
+- **For Integration**: Feed status data into Homepage dashboard widgets
 
 ---
 
-## 🌍 Create & Customize a Status Page
+## 🌍 Create & Customize Status Pages
 
-1. Go to **Status Pages** tab
-2. Click **"New Status Page"**
-3. Customize:
+### Step 1: Create Your First Status Page
 
-   * Name & Description
-   * Public or Private access
-   * Layout and included monitors
-4. Share the link or embed in your site/dashboard
+1. Navigate to **Status Pages** tab in the sidebar
+2. Click **"+ New Status Page"**
+3. Configure basic settings:
+
+   **General Settings:**
+   - **Title**: `Home Services` or `My Infrastructure`
+   - **Description**: `Real-time status of personal homelab services`
+   - **Theme**: Light/Dark/Auto
+   - **Language**: Select your preference
+
+   **URL & Access:**
+   - **Slug**: `anynameyouwant` ⚠️ **This is crucial for Homepage integration!**
+   - **Show Tags**: Enable to group related services
+   - **Show Powered By**: Toggle Uptime Kuma branding
+
+### Step 2: Configure Monitors
+
+4. **Add Monitors to Status Page:**
+   - Select which monitors to display publicly
+   - Group related services (e.g., "Media Services", "Download Tools")
+   - Choose display order and visibility
+
+5. **Customize Appearance:**
+   - Upload custom logo/favicon
+   - Set custom CSS if desired
+   - Configure incident management settings
+
+### Step 3: Access & Share
+
+Your status page will be accessible at:
+```
+http://localhost:3001/status/anynameyouwant
+```
+
+Or remotely via Tailscale:
+```
+http://100.x.x.x:3001/status/anynameyouwant
+```
+
+---
+
+## 🏷️ Understanding Slugs & Their Importance
+
+### What is a Slug?
+
+A **slug** is the URL-friendly identifier for your status page. It appears in the URL path:
+
+```
+http://your-server:3001/status/YOUR-SLUG-HERE
+```
+
+### Critical Slug Requirements:
+
+**For Homepage Integration:**
+- Use exactly: `anynameyouwant` (as shown in your Homepage config)
+- Must be lowercase, no spaces
+- Avoid special characters except hyphens
+
+**Multiple Status Pages Example:**
+```yaml
+# You could create multiple pages for different purposes:
+http://localhost:3001/status/homeservices    # For personal/family use
+http://localhost:3001/status/infrastructure  # For technical services  
+http://localhost:3001/status/public         # For external users
+```
+
+### Best Practices for Slugs:
+
+- **Keep it simple**: `homeservices`, `infrastructure`, `main`
+- **Be descriptive**: `dev-services`, `production-apps`
+- **Stay consistent**: Once set and integrated, avoid changing slugs
+- **Document it**: Note your slug in your setup documentation
+
+---
+
+## 📊 Status Page Management Tips
+
+### Organizing Your Monitors
+
+**Group by Function:**
+```
+🎬 Media Services
+├── Jellyfin
+├── Plex (if applicable)
+└── Overseerr
+
+📥 Download Management  
+├── Transmission
+├── qBittorrent
+└── NZBGet
+
+🔍 Content Discovery
+├── Sonarr
+├── Radarr  
+└── Prowlarr
+```
+
+**Monitor Selection Strategy:**
+- Include user-facing services (Jellyfin, Plex)
+- Add critical infrastructure (DNS, VPN)
+- Exclude admin-only tools unless needed
+- Consider your audience (family vs technical users)
+
+### Customization Options
+
+**Visual Branding:**
+- Upload custom favicon and logo
+- Match your Homepage color scheme
+- Add custom CSS for advanced styling
+
+**Functional Features:**
+- Enable incident posting for planned maintenance
+- Set up maintenance mode scheduling
+- Configure automatic incident updates
 
 ---
 
@@ -152,6 +273,11 @@ To safely access Uptime Kuma remotely:
 http://100.x.x.x:3001
 ```
 
+**Status Page Remote Access:**
+```bash
+http://100.x.x.x:3001/status/homeservices
+```
+
 > 🔐 This avoids exposing Kuma to the public internet.
 
 ---
@@ -165,6 +291,25 @@ http://100.x.x.x:3001
 | ⚙️ Update               | Pull latest repo and re-run `npm install && npm run setup` |
 | 🚨 Add new monitor      | Click `Add New Monitor` in the dashboard                   |
 | 🔔 Adjust notifications | Use per-monitor alerting settings                          |
+| 📊 Update status pages  | Add/remove monitors from public status pages              |
+
+---
+
+## 🔗 Integration with Homepage Dashboard
+
+Once your status page is created with the `anynameyouwant` slug, it will automatically work with your Homepage widgets:
+
+```yaml
+# This will now display live status from Uptime Kuma
+- Home Services:
+    icon: si-uptimekuma-#5CDD8B
+    href: http://localhost:3001
+    description: Home Services Uptime Status
+    widget:
+      type: uptimekuma
+      url: http://localhost:3001
+      slug: anynameyouwant  # ← This matches your status page slug
+```
 
 ---
 
@@ -175,9 +320,11 @@ http://100.x.x.x:3001
 | Uptime Kuma Installed       | ✅            |
 | Services Monitored          | ✅            |
 | Status Page Created         | ✅            |
+| Slug Configured             | ✅            |
+| Homepage Integration Ready  | ✅            |
 | Email Notifications         | ✅            |
 | Remote Access via Tailscale | ✅            |
 
-Uptime Kuma is now your personal observability dashboard — clean, reliable, and fully self-hosted.
+Uptime Kuma is now your personal observability dashboard — clean, reliable, and fully self-hosted with beautiful status pages ready for sharing and integration.
 
 ---

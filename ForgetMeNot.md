@@ -1,6 +1,6 @@
 # 🧭 **Rajin's Homelab Guide**
 
-**“In case I ever forget everything.”**
+**"In case I ever forget everything."**
 
 ---
 
@@ -15,6 +15,7 @@
 | **Tailscale**    | Creates a private network between all my devices, lets me securely access this server remotely from anywhere |
 | **Prowlarr**     | Acts as the unified **indexer manager**, connecting multiple torrent sources to Sonarr & Radarr              |
 | **Homepage**     | A custom dashboard that shows the status and shortcuts to all my services                                    |
+| **Uptime Kuma**  | Monitors all services for uptime/downtime, sends alerts, and provides status pages for sharing              |
 
 ---
 
@@ -31,8 +32,9 @@
 | **Tailscale Admin** | [https://login.tailscale.com](https://login.tailscale.com) | N/A          | `rajinkhan` | `__________` |
 | **Prowlarr**        | `http://localhost:9696`                                    | `9696`       | `rajinkhan` | `__________` |
 | **Homepage**        | `http://localhost:3000`                                    | `3000`       | _none_      | _none_       |
+| **Uptime Kuma**     | `http://localhost:3001`                                    | `3001`       | `rajinkhan` | `__________` |
 
-You can also replace `localhost` with your machine’s local IP (e.g., `192.168.xxx.xxx`) if you're on the same LAN.
+You can also replace `localhost` with your machine's local IP (e.g., `192.168.xxx.xxx`) if you're on the same LAN.
 
 ---
 
@@ -43,7 +45,7 @@ You can also replace `localhost` with your machine’s local IP (e.g., `192.168.
 ├── Movies/         # Where Radarr stores organized movie files | Where Jellyfin retrieves Movies
 ├── TV Shows/       # Where Sonarr stores organized TV files | Where Jellyfin retrieves Shows
 └── Downloads/      # Where Transmission saves new downloads temporarily, moves them to the Jellyfin Media folders later
-````
+```
 
 ---
 
@@ -77,7 +79,13 @@ When booting or recovering the homelab:
    * `open -a Prowlarr`
    * Visit [http://localhost:9696](http://localhost:9696)
 
-6. **Start Tailscale (optional)**
+6. **Start Uptime Kuma**
+
+   * Run: `pm2 start uptime-kuma` (if using pm2)
+   * Or: `cd uptime-kuma && node server/server.js`
+   * Visit [http://localhost:3001](http://localhost:3001)
+
+7. **Start Tailscale (optional)**
 
    * Run: `tailscale up`
    * Check status: `tailscale status`
@@ -85,7 +93,7 @@ When booting or recovering the homelab:
    * Or, just turn on the tailscale app and connect
    * Then, copy the tailscale IP of the macbook-pro, add the relevant port number, and login to that server/service
 
-7. **Start Homepage Dashboard (optional)**
+8. **Start Homepage Dashboard (optional)**
 
    * Run: `./homepage.sh start`
    * Logs: `./homepage.sh logs`
@@ -131,8 +139,10 @@ When booting or recovering the homelab:
 | --------------------------------- | ------------------------------------------------------------------------------------------ |
 | Jellyfin shows nothing            | Check that files are in `/Movies` or `/TV Shows`, and Jellyfin libraries are set to those  |
 | Transmission not downloading      | Make sure it's running, check port settings, or test torrents manually                     |
-| Sonarr/Radarr not finding content | Check indexers in **Prowlarr**, make sure they’re enabled and properly synced              |
+| Sonarr/Radarr not finding content | Check indexers in **Prowlarr**, make sure they're enabled and properly synced              |
 | Remote access fails               | Run `tailscale up`, check `tailscale status`, run Tailscale and check correct Tailscale IP |
+| Uptime Kuma not monitoring       | Check monitors are configured with correct API URLs (include apikey parameter)             |
+| Services show offline in Kuma    | Verify service URLs and API keys, restart Uptime Kuma with `pm2 restart uptime-kuma`      |
 | Subtitle missing                  | Install **Bazarr** and point it to the same folders (work on this later)                        |
 
 ---
@@ -146,6 +156,7 @@ When booting or recovering the homelab:
 | Radarr       | `rajinkhan`         | `__________` |
 | Transmission | `rajinkhan`         | `__________` |
 | Prowlarr     | `rajinkhan`         | `__________` |
+| Uptime Kuma  | `rajinkhan`         | `__________` |
 | Tailscale    | `github auth login` | `__________` |
 
 ---
@@ -155,6 +166,7 @@ When booting or recovering the homelab:
 * 🧹 Delete old downloads from `/Downloads`
 * 🔄 Update apps via Homebrew or from official sites
 * 🧠 Refresh indexers in **Prowlarr**
+* 📊 Check **Uptime Kuma** for any service alerts or downtime
 * 🛡️ Run occasional backups of `/Media` to an external drive
 * 🧐 Monitor Homepage logs in homepage.log
 
@@ -163,7 +175,6 @@ When booting or recovering the homelab:
 ## ✨ OPTIONAL TOOLS TO ADD LATER
 
 * **Bazarr** — auto subtitles
-* **Dashy** or **Heimdall** — visual dashboard for all services
 * **Pi-hole** — network ad blocker
 * **Nextcloud** — private file cloud
 
