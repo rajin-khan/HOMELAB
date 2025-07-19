@@ -14,6 +14,7 @@
 | **Transmission** | Downloads torrents from Sonarr/Radarr                                                                        |
 | **Tailscale**    | Creates a private network between all my devices, lets me securely access this server remotely from anywhere |
 | **Prowlarr**     | Acts as the unified **indexer manager**, connecting multiple torrent sources to Sonarr & Radarr              |
+| **Homepage**     | A custom dashboard that shows the status and shortcuts to all my services                                    |
 
 ---
 
@@ -29,8 +30,9 @@
 | **Transmission**    | `http://localhost:9091`                                    | `9091`       | `rajinkhan` | `__________` |
 | **Tailscale Admin** | [https://login.tailscale.com](https://login.tailscale.com) | N/A          | `rajinkhan` | `__________` |
 | **Prowlarr**        | `http://localhost:9696`                                    | `9696`       | `rajinkhan` | `__________` |
+| **Homepage**        | `http://localhost:3000`                                    | `3000`       | _none_      | _none_       |
 
-You can also replace `localhost` with your machine’s local IP (e.g., `192.168.1.100`) if you're on the same LAN.
+You can also replace `localhost` with your machine’s local IP (e.g., `192.168.xxx.xxx`) if you're on the same LAN.
 
 ---
 
@@ -41,7 +43,7 @@ You can also replace `localhost` with your machine’s local IP (e.g., `192.168.
 ├── Movies/         # Where Radarr stores organized movie files | Where Jellyfin retrieves Movies
 ├── TV Shows/       # Where Sonarr stores organized TV files | Where Jellyfin retrieves Shows
 └── Downloads/      # Where Transmission saves new downloads temporarily, moves them to the Jellyfin Media folders later
-```
+````
 
 ---
 
@@ -82,6 +84,12 @@ When booting or recovering the homelab:
    * Visit remote server: `http://<tailscale-ip>:8096` from your phone/laptop
    * Or, just turn on the tailscale app and connect
    * Then, copy the tailscale IP of the macbook-pro, add the relevant port number, and login to that server/service
+
+7. **Start Homepage Dashboard (optional)**
+
+   * Run: `./homepage.sh start`
+   * Logs: `./homepage.sh logs`
+   * Access: [http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -125,7 +133,7 @@ When booting or recovering the homelab:
 | Transmission not downloading      | Make sure it's running, check port settings, or test torrents manually                     |
 | Sonarr/Radarr not finding content | Check indexers in **Prowlarr**, make sure they’re enabled and properly synced              |
 | Remote access fails               | Run `tailscale up`, check `tailscale status`, run Tailscale and check correct Tailscale IP |
-| Subtitle missing                  | Install **Bazarr** and point it to the same folders (ask me later!)                        |
+| Subtitle missing                  | Install **Bazarr** and point it to the same folders (work on this later)                        |
 
 ---
 
@@ -148,6 +156,7 @@ When booting or recovering the homelab:
 * 🔄 Update apps via Homebrew or from official sites
 * 🧠 Refresh indexers in **Prowlarr**
 * 🛡️ Run occasional backups of `/Media` to an external drive
+* 🧐 Monitor Homepage logs in homepage.log
 
 ---
 

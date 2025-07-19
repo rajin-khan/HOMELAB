@@ -3,6 +3,7 @@
 > 📁 Self-hosted, secure, and fully automated streaming system  
 > ⚙️ Powered by: **Sonarr + Radarr + Prowlarr + Transmission + Jellyfin**  
 > 🔐 Privacy-first via **Tailscale** VPN
+> 🏡 Dashboard with Homepage to monitor all Services
 
 ---
 
@@ -16,6 +17,7 @@
 | 🔍 Prowlarr     | Unified indexer manager for Sonarr & Radarr    |
 | ⬇️ Transmission | Torrent client for actual downloads            |
 | 🔒 Tailscale    | Secure remote access without open ports        |
+| 🏡 Homepage     | Dashboard for Service Management and Monitoring |
 
 ---
 
@@ -42,6 +44,7 @@
 4. Transmission downloads to `/Downloads/Incomplete`, then moves to `Completed`
 5. Sonarr/Radarr detect the finished download, rename + organize it into the correct folder
 6. **Jellyfin** scans the folders and displays new content
+7. **Homepage** dashboard shows real-time status and control for all services (remember to start the shell script for homepage as it builds from source)
 
 ---
 
@@ -82,6 +85,7 @@ All **public** and login-free:
 
 | App           | URL                          | Port  |
 |---------------|------------------------------|-------|
+| Homepage (once started with the script)     | `http://localhost:3000`       | 3000  |
 | Jellyfin      | `http://localhost:8096`       | 8096  |
 | Sonarr        | `http://localhost:8989`       | 8989  |
 | Radarr        | `http://localhost:7878`       | 7878  |
@@ -120,6 +124,7 @@ This setup is configured strictly for **personal** and **legal** use.
 - 🔄 Sync indexers in Prowlarr as needed
 - 🔁 Back up configs from `~/Library/Application Support/...`
 - 🎨 Customize Jellyfin UI via custom CSS (e.g., Finimalism theme)
+- 📄 Monitor service logs using `./homepage.sh logs` for the dashboard
 
 ---
 
@@ -129,5 +134,6 @@ This setup is configured strictly for **personal** and **legal** use.
 - 🧭 [Dashy](https://github.com/Lissy93/dashy) → Dashboard for all services
 - ☁️ [Nextcloud](https://nextcloud.com) → Private file syncing and cloud storage
 - 🛑 [Pi-hole](https://pi-hole.net) → Network-wide ad blocker
+- 🖥️ [Homepage](https://gethomepage.dev) → Beautiful dashboard to view and control your media stack
 
 ---
