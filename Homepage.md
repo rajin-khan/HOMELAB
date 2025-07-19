@@ -151,6 +151,9 @@ layout: # This is my custom layout, experiment and modify as you like
   Entertainment:
     style: row
     columns: 2
+  Tools:
+    style: row
+    columns: 2
 
 fullWidth: true
 
