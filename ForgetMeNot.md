@@ -1,6 +1,6 @@
 # 🧭 **Rajin's Homelab Guide**
 
-**"In case I ever forget everything."**
+**This is a guide in case I ever forget everything. You can use it as a cheatsheet to remember things as well.**
 
 ---
 
