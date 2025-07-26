@@ -15,7 +15,8 @@
 | **Tailscale**    | Creates a private network between all my devices, lets me securely access this server remotely from anywhere |
 | **Prowlarr**     | Acts as the unified **indexer manager**, connecting multiple torrent sources to Sonarr & Radarr              |
 | **Homepage**     | A custom dashboard that shows the status and shortcuts to all my services                                    |
-| **Uptime Kuma**  | Monitors all services for uptime/downtime, sends alerts, and provides status pages for sharing              |
+| **Uptime Kuma**  | Monitors all services for uptime/downtime, sends alerts, and provides status pages for sharing               |
+| **Cron**         | Automates scheduled tasks like cleanup scripts and backups                                                   |
 
 ---
 
@@ -99,6 +100,11 @@ When booting or recovering the homelab:
    * Logs: `./homepage.sh logs`
    * Access: [http://localhost:3000](http://localhost:3000)
 
+9. **Verify Cron Jobs (optional)**
+
+   * Run: `crontab -l`
+   * This confirms that automated tasks (like cleanup) are scheduled to run.
+
 ---
 
 ## 🔄 WHAT HAPPENS WHEN I ADD A SHOW OR MOVIE?
@@ -144,6 +150,7 @@ When booting or recovering the homelab:
 | Uptime Kuma not monitoring       | Check monitors are configured with correct API URLs (include apikey parameter)             |
 | Services show offline in Kuma    | Verify service URLs and API keys, restart Uptime Kuma with `pm2 restart uptime-kuma`      |
 | Subtitle missing                  | Install **Bazarr** and point it to the same folders (work on this later)                        |
+| Automated tasks not running     | Check cron logs (`~/cron_homelab.log`), verify schedule (`crontab -l`), and script permissions (`chmod +x`) |
 
 ---
 
@@ -163,7 +170,7 @@ When booting or recovering the homelab:
 
 ## 🔁 REGULAR MAINTENANCE
 
-* 🧹 Delete old downloads from `/Downloads`
+* 🧹 **Verify automated cleanup** is working by checking `~/cron_homelab.log`.
 * 🔄 Update apps via Homebrew or from official sites
 * 🧠 Refresh indexers in **Prowlarr**
 * 📊 Check **Uptime Kuma** for any service alerts or downtime
