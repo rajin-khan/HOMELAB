@@ -19,6 +19,7 @@
 | 🔒 Tailscale    | Secure remote access without open ports         |
 | 📊 Uptime Kuma  | Service health monitoring and alerting          |
 | 🏡 Homepage     | Dashboard for Service Management and Monitoring |
+| ⏰ Cron         | Automates Maintenance & Activity Scripts on a Schedule     |
 
 ---
 
@@ -45,6 +46,7 @@
 6. **Jellyfin** scans the folders and displays new content
 7. **Uptime Kuma** continuously monitors all service endpoints and alerts via email if anything goes down
 8. **Homepage** dashboard shows real-time status and control for all services (remember to start the shell script for homepage as it builds from source)
+9. **Cron Jobs** run in the background to automate routine tasks like cleaning up old downloads, or other changes to push to your remote repos on GitHub.
 
 ---
 
@@ -143,6 +145,7 @@ This setup is configured strictly for **personal** and **legal** use.
 * 🎨 Customize Jellyfin UI via custom CSS (e.g., Finimalism theme)
 * 📄 Monitor service logs using `./homepage.sh logs` for the dashboard
 * 📊 Regularly check **Uptime Kuma** status for early detection of downtime
+* 🤖 Automate tasks like cleanup and automatic repo updates with **cron jobs** (see [`CronJobAutomation.md`](./CronJobAutomation.md)).
 
 ---
 
