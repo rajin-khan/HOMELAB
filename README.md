@@ -39,7 +39,7 @@
 ## 🚀 How It Works
 
 1. Add a **TV show (Sonarr)** or **movie (Radarr)**
-2. **Prowlarr** searches public indexers (Nyaa, TPB, YTS, etc.)
+2. **Prowlarr** searches public indexers
 3. Sends magnet/torrent to **Transmission**
 4. Transmission downloads to `/Downloads/Incomplete`, then moves to `Completed`
 5. Sonarr/Radarr detect the finished download, rename + organize it into the correct folder
