@@ -3,7 +3,7 @@
 > 📁 Self-hosted, secure, and fully automated streaming system
 > ⚙️ Powered by: **Sonarr + Radarr + Prowlarr + Transmission + Jellyfin + Uptime Kuma**
 > 🔐 Privacy-first via **Tailscale** VPN
-> 🏡 Dashboard with Homepage to monitor all Services
+> 🏡 Dashboard with **Homepage** to monitor all Services
 
 ---
 
@@ -13,7 +13,7 @@
 | --------------- | ----------------------------------------------- |
 | 🧠 Jellyfin     | Media server — organize & stream content        |
 | 📺 Sonarr       | Auto-download & manage TV shows                 |
-| 🎬 Radarr       | Auto-download & manage movies                   |
+| 🎬 Radarr       | Auto-download & manage Movies                   |
 | 🔍 Prowlarr     | Unified indexer manager for Sonarr & Radarr     |
 | ⬇️ Transmission | Torrent client for actual downloads             |
 | 🔒 Tailscale    | Secure remote access without open ports         |
