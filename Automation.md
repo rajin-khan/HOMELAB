@@ -1,214 +1,77 @@
-# 📺🎬 **Sonarr, Radarr, Prowlarr, and Transmission Setup Guide**
+# 📺 Media Automation Setup Guide
 
-**“Automated pipeline for acquiring, organizing, and serving public domain or personal media with Jellyfin.”**
+> These apps take a movie or show request, download the file, and put it in your library.
 
----
-
-## 🧠 OVERVIEW: What Each Tool Does
-
-| Tool             | Purpose                                                                    |
-| ---------------- | -------------------------------------------------------------------------- |
-| **Sonarr**       | Automates the download and organization of **TV shows**                    |
-| **Radarr**       | Automates the download and organization of **movies**                      |
-| **Transmission** | Torrent client used to download content (triggered by Sonarr/Radarr)       |
-| **Prowlarr**     | Unified indexer manager that connects public torrent sources to the system |
+The part I like is picking a title once and opening my [Jellyfin](https://github.com/jellyfin/jellyfin) library when it's ready. I usually start with Aria if I have a title in mind. [Jellyseerr](https://github.com/seerr-team/seerr) is still handy when I want to browse and make the request myself. The [Hermes Guide](Hermes.md) has examples of how I ask.
 
 ---
 
-## 🧭 PIPELINE WORKFLOW OVERVIEW
+## 🧠 What Each Tool Does
 
-1. **User adds a show/movie** in Sonarr or Radarr
-2. **Prowlarr searches torrent indexers** for matching releases
-3. A **torrent or magnet link is passed to Transmission**
-4. **Transmission downloads** to a temporary folder
-5. **Sonarr/Radarr monitor** that folder, detect completed downloads
-6. Files are **renamed and moved** to the appropriate **TV Shows** or **Movies** folders
-7. **Jellyfin automatically updates**, showing the new content
+| Tool | Job |
+| --- | --- |
+| 🍿 **[Jellyseerr](https://github.com/seerr-team/seerr)** | Accepts a request and sends it to the right app |
+| 📺 **[Sonarr](https://github.com/Sonarr/Sonarr)** | Finds and organizes TV episodes |
+| 🎬 **[Radarr](https://github.com/Radarr/Radarr)** | Finds and organizes movies |
+| 🔍 **[Prowlarr](https://github.com/Prowlarr/Prowlarr)** | One list of places your movie and TV apps look for files |
+| ⬇️ **[qBittorrent](https://github.com/qbittorrent/qBittorrent)** | Downloads files and can share them with other people |
+| 🎞️ **[Jellyfin](https://github.com/jellyfin/jellyfin)** | Scans the library and plays the finished files |
 
----
-
-## 🛠️ TOOL-BY-TOOL SETUP (macOS, No Docker)
-
----
-
-### ⚙️ 1. **Transmission Setup**
-
-#### 📥 Installation
-
-* Download from: [https://transmissionbt.com](https://transmissionbt.com)
-* Install and open the app
-* Access Transmission Web:
-  👉 `http://localhost:9091/transmission/web`
-
-#### ⚙️ Configuration via Preferences (Critical)
-
-1. Open the **Transmission app** (not just the web UI)
-2. Go to **Transmission → Preferences → Transfers**
-3. Set:
-
-   * ✅ **Download to:** `/Users/USERNAME/Media/Downloads/Incomplete`
-   * ✅ **Move completed downloads to:** `/Users/USERNAME/Media/Downloads/Completed`
-
-This ensures:
-
-* Downloads occur in an **incomplete folder**
-* Once completed, they are moved to a **completed folder**
-* Sonarr and Radarr **watch only the completed folder**, so they only import finished files
-
-Example directory layout:
-
-```bash
-/Users/USERNAME/Media/
-├── Downloads/
-│   ├── Incomplete/      # Where Transmission stores partial downloads
-│   └── Completed/       # Where completed files are moved for processing
-├── TV Shows/            # Sonarr final destination
-├── Movies/              # Radarr final destination
-```
+The Mac used [Transmission](https://github.com/transmission/transmission). The Pi uses [qBittorrent](https://github.com/qbittorrent/qBittorrent) and still runs [Jellyseerr](https://github.com/seerr-team/seerr). For a fresh setup, you can use its successor, [Seerr](https://github.com/seerr-team/seerr). [Seerr installation guide](https://docs.seerr.dev/getting-started/)
 
 ---
 
-### ⚙️ 2. **Sonarr & Radarr Setup**
+## 🧭 Where the Files Go
 
-#### 📥 Installation
+| App | Downloads inside the app | Library inside the app |
+| --- | --- | --- |
+| [qBittorrent](https://github.com/qbittorrent/qBittorrent) | `/downloads` | |
+| [Sonarr](https://github.com/Sonarr/Sonarr) | `/downloads` | `/data/Aria-Inbox/TV` |
+| [Radarr](https://github.com/Radarr/Radarr) | `/downloads` | `/data/Aria-Inbox/Movies` |
 
-* **Sonarr**: [https://sonarr.tv/#downloads](https://sonarr.tv/#downloads) → `http://localhost:8989`
-* **Radarr**: [https://radarr.video/#downloads](https://radarr.video/#downloads) → `http://localhost:7878`
+On the Pi, `/downloads` points to `/srv/media/Aria-Downloads`. [Sonarr](https://github.com/Sonarr/Sonarr) and [Radarr](https://github.com/Radarr/Radarr) also see the USB drive as `/data`. [Jellyfin](https://github.com/jellyfin/jellyfin) gets its own read-only view of the [movie and TV folders](Jellyfin.md).
 
-#### 📁 Media Folders
-
-* Sonarr root: `/Users/USERNAME/Media/TV Shows`
-* Radarr root: `/Users/USERNAME/Media/Movies`
-
-#### 🔗 Add Transmission as Download Client
-
-In both Sonarr and Radarr:
-
-1. Go to **Settings → Download Clients → + Add**
-2. Choose:
-
-   * Type: `Transmission`
-   * Host: `localhost`
-   * Port: `9091`
-   * Username/Password: leave blank unless set
-3. Set **Download folder** to:
-
-   * `/Users/USERNAME/Media/Downloads/Completed`
-4. Test and Save
-
-Sonarr and Radarr will now:
-
-* Send torrents to Transmission
-* Monitor only the **Completed** folder
-* Ignore unfinished files
+> 💡 Keep downloads and finished library files in separate folders. On the exFAT drive, leave room for both copies while a download is still seeding.
 
 ---
 
-### ⚙️ 3. **Prowlarr Setup**
+## 🛠️ Tool-by-Tool Setup
 
-#### 📥 Installation
+### 1. ⬇️ Set Up [qBittorrent](https://github.com/qbittorrent/qBittorrent)
 
-* Download: [https://prowlarr.com/#downloads](https://prowlarr.com/#downloads)
-* Run and access: `http://localhost:9696`
+- Use the [qBittorrent Compose example](https://docs.linuxserver.io/images/docker-qbittorrent/) to start the container. The web app uses port `8080` here.
+- Set the save path inside the app to `/downloads`.
+- Give movies and shows different categories. For a fresh setup, `movies` and `tv` work as example names.
 
----
+### 2. 📺 Connect [Sonarr](https://github.com/Sonarr/Sonarr) & [Radarr](https://github.com/Radarr/Radarr)
 
-### 🌐 Indexers in Prowlarr
+- Use the [Sonarr container guide](https://docs.linuxserver.io/images/docker-sonarr/) and [Radarr container guide](https://docs.linuxserver.io/images/docker-radarr/) to add both apps. Put them on the same Compose network as [qBittorrent](https://github.com/qbittorrent/qBittorrent).
+- In each app, set the library's **root folder** to the path from the table above.
+- Under **Settings → Download Clients**, add [qBittorrent](https://github.com/qbittorrent/qBittorrent). Enter its Compose service name, web port, and sign-in details. Pick the category you created for that app, then test the connection before saving. [Sonarr settings guide](https://wiki.servarr.com/sonarr/settings)
 
-#### ✅ What It Does
+### 3. 🔍 Connect [Prowlarr](https://github.com/Prowlarr/Prowlarr)
 
-Prowlarr connects torrent **indexers** to Sonarr/Radarr using a single control panel.
+- Start it from the [Prowlarr container guide](https://docs.linuxserver.io/images/docker-prowlarr/) on the same network.
+- In **Settings → Applications**, add [Sonarr](https://github.com/Sonarr/Sonarr) and [Radarr](https://github.com/Radarr/Radarr). If you named the services `sonarr` and `radarr`, the internal addresses are `http://sonarr:8989` and `http://radarr:7878`. Use the names from your own Compose setup.
+- Add the API key for each connection in the app settings and sync the sources you're allowed to use. Keep the keys off the public repo.
 
-| Indexer            | Purpose                     |
-| ------------------ | --------------------------- |
-| `nyaa.si`          | Anime content (TV & movies) |
-| `thepiratebay`     | General-purpose             |
-| `rarbg`            | General + high-quality      |
-| `torrentdownloads` | Archive/general releases    |
-| `yts`              | High-quality movies         |
-| `torrentsome`      | Korean-focused media        |
-| `torrenttip`       | Additional Korean sources   |
+### 4. 🍿 Add the Request App
 
-Only **public** indexers are used — no login or API key required.
+Connect [Jellyseerr](https://github.com/seerr-team/seerr) or [Seerr](https://github.com/seerr-team/seerr) to [Jellyfin](https://github.com/jellyfin/jellyfin), [Sonarr](https://github.com/Sonarr/Sonarr), and [Radarr](https://github.com/Radarr/Radarr) during setup. Pick the library and quality profile for each app before approving a request. The [Seerr setup guide](https://docs.seerr.dev/getting-started/) has the install steps for a new instance.
 
 ---
 
-#### 🔗 Sync Prowlarr with Sonarr & Radarr
+## 🧪 Try the Whole Thing With One File
 
-1. Prowlarr → **Settings → Applications → + Add**
-2. Add:
+Pick a title you can find in the request app and that you have permission to download and share. To test just the library and playback, use a video you already have and follow the [Jellyfin Setup Guide](Jellyfin.md).
 
-   * Sonarr: `localhost:8989` + API Key from Sonarr
-   * Radarr: `localhost:7878` + API Key from Radarr
-3. Click **"Sync Indexers"** for each app
+- [ ] The request shows up in [Sonarr](https://github.com/Sonarr/Sonarr) or [Radarr](https://github.com/Radarr/Radarr).
+- [ ] [qBittorrent](https://github.com/qbittorrent/qBittorrent) finishes the download.
+- [ ] [Sonarr](https://github.com/Sonarr/Sonarr) or [Radarr](https://github.com/Radarr/Radarr) imports it into the right library folder.
+- [ ] [Jellyfin](https://github.com/jellyfin/jellyfin) scans it and the video plays.
 
-✅ All added indexers are now mirrored in Sonarr & Radarr with correct categories:
-
-* Anime → Sonarr (Anime category)
-* Movies → Radarr
-* General → Both apps
+If it stops halfway, open the [quick reference](ForgetMeNot.md) or ask your agent which app is waiting.
 
 ---
 
-## 🔄 FILE FLOW SUMMARY
-
-```text
-1. User adds a TV show/movie (Sonarr/Radarr)
-2. Prowlarr finds torrent from public indexers
-3. Transmission downloads to Incomplete folder
-4. Once complete, file moves to Completed
-5. Sonarr/Radarr rename and move to Media/TV Shows or Media/Movies
-6. Jellyfin auto-scans folders and shows content
-```
-
----
-
-## 🧪 Testing the System
-
-To verify everything:
-
-* Add a **public domain TV show or movie**
-* Wait for download to complete
-* Check:
-
-  * File appears in Completed folder
-  * File is renamed/moved to correct media folder
-  * Appears in Jellyfin at `localhost:8096`
-
----
-
-## 🔐 Example Credentials (Template)
-
-| App          | Username    | Password     |
-| ------------ | ----------- | ------------ |
-| Transmission | `rajinkhan` | `__________` |
-| Sonarr       | `rajinkhan` | `__________` |
-| Radarr       | `rajinkhan` | `__________` |
-| Prowlarr     | `rajinkhan` | `__________` |
-
----
-
-## 🔁 Routine Maintenance
-
-* 🧹 Clean up old files from `/Downloads/Completed` if no longer needed
-* 🔄 Refresh indexers in Prowlarr occasionally
-* 🛠️ Back up configs from:
-
-  * `~/Library/Application Support/Transmission`
-  * `~/Library/Application Support/Sonarr`
-  * `~/Library/Application Support/Radarr`
-  * `~/Library/Application Support/Prowlarr`
-
----
-
-## 🛡️ Legal & Ethical Use
-
-This setup is intended for:
-
-* Public domain content (e.g., [archive.org](https://archive.org))
-* Personal, self-created, or legally purchased media
-* Testing automation pipelines with openly licensed files
-
-**Avoid copyrighted content** or any material that violates laws.
-
----
+📖 [Back to the reading order](ReadingOrder.md) · ⏭️ **Next up** [Put the apps on the Homepage dashboard](Homepage.md)
